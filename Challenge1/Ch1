@@ -1,0 +1,38 @@
+#!/bin/bash
+
+# Verificar que se proporcionaron los argumentos necesarios
+if [ "$#" -ne 6 ]; then
+    echo "Uso: $0 <nombre_VM> <tipo_SO> <num_CPUS> <memoria_RAM_GB> <tamaño_Disco_GB> <nombre_controlador_SATA> <nombre_controlador_IDE>"
+    exit 1
+fi
+
+# Asignar argumentos a variables
+NOMBRE_VM=$1
+TIPO_SO=$2
+NUM_CPUS=$3
+MEMORIA_RAM_GB=$4
+TAMAÑO_DISCO_GB=$5
+CONTROLADOR_SATA=$6
+CONTROLADOR_IDE=$7
+
+# Crear la Máquina Virtual
+VBoxManage createvm --name "$NOMBRE_VM" --register
+VBoxManage modifyvm "$NOMBRE_VM" --ostype "$TIPO_SO" --cpus "$NUM_CPUS" --memory "$MEMORIA_RAM_GB" --vram 128 --nic1 nat
+
+# Crear un disco duro virtual
+VBoxManage createhd --filename "${NOMBRE_VM}.vdi" --size "$TAMAÑO_DISCO_GB"
+
+# Asociar el disco duro a la Máquina Virtual
+VBoxManage storagectl "$NOMBRE_VM" --name "$CONTROLADOR_SATA" --add sata --controller IntelAhci
+VBoxManage storageattach "$NOMBRE_VM" --storagectl "$CONTROLADOR_SATA" --port 0 --device 0 --type hdd --medium "${NOMBRE_VM}.vdi"
+
+# Crear el controlador IDE y asociar un CD/DVD
+VBoxManage storagectl "$NOMBRE_VM" --name "$CONTROLADOR_IDE" --add ide
+VBoxManage storageattach "$NOMBRE_VM" --storagectl "$CONTROLADOR_IDE" --port 0 --device 0 --type dvddrive --medium emptydrive
+
+# Imprimir la configuración creada
+echo "Configuración de la Máquina Virtual $NOMBRE_VM:"
+VBoxManage showvminfo "$NOMBRE_VM" --details
+
+# Finalizar el script
+echo "Máquina Virtual creada y configurada con éxito."
