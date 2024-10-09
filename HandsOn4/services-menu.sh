@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# Función para mostrar el menú
 show_menu() {
     echo "Seleccione una opción:"
     echo "1. Listar el contenido de un fichero"
@@ -11,7 +10,6 @@ show_menu() {
     echo "6. Salir"
 }
 
-# Función para listar el contenido de un fichero
 list_content() {
     read -p "Introduzca la ruta absoluta del fichero o carpeta: " filepath
     if [ -d "$filepath" ]; then
@@ -21,7 +19,6 @@ list_content() {
     fi
 }
 
-# Función para crear un archivo de texto
 create_text_file() {
     read -p "Introduzca el nombre del archivo a crear: " filename
     read -p "Introduzca el texto que desea almacenar: " text
@@ -29,7 +26,6 @@ create_text_file() {
     echo "Archivo creado y texto almacenado."
 }
 
-# Función para comparar dos archivos
 compare_files() {
     read -p "Introduzca la ruta del primer archivo: " file1
     read -p "Introduzca la ruta del segundo archivo: " file2
@@ -40,20 +36,17 @@ compare_files() {
     fi
 }
 
-# Función para mostrar uso de awk
 use_awk() {
     read -p "Introduzca la ruta del archivo para usar awk: " file
     awk '{ print $1 }' "$file"
 }
 
-# Función para mostrar uso de grep
 use_grep() {
     read -p "Introduzca la cadena a buscar: " pattern
     read -p "Introduzca la ruta del archivo: " file
     grep "$pattern" "$file"
 }
 
-# Bucle del menú
 while true; do
     show_menu
     read -p "Seleccione una opción [1-6]: " choice
